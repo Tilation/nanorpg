@@ -11,7 +11,12 @@ protected:
   static void (*StateMachineStep)(int);
   static SSOLED *oled;
   static Player *player;
-  static char strbuffer[6];
+  static char strbuffer[32];
+
+  void ClearBuffer()
+  {
+    memset(strbuffer, 0, sizeof (strbuffer));
+  }
 
 public:
   Screen() {}
@@ -32,7 +37,7 @@ public:
 void (*Screen::StateMachineStep)(int);
 SSOLED *Screen::oled;
 Player *Screen::player;
-char Screen::strbuffer[6];
+char Screen::strbuffer[32];
 
 class BattleScreen : public Screen
 {
@@ -235,13 +240,13 @@ public:
     oledSetPixel(Screen::oled, 127, 31, 0, 0);
     oledSetPixel(Screen::oled, 127, 31, 0, 0);
 
-    char bff[22];
+    Screen::ClearBuffer();
 
-    sprintf(bff, "INFO: DM/DF:%3d/%-3d", enemy->Dmg, enemy->Def);
-    oledWriteString(Screen::oled, 0, 4, 1, bff, FONT_6x8, 0, 0);
+    sprintf(strbuffer, "INFO: DM/DF:%3d/%-3d", enemy->Dmg, enemy->Def);
+    oledWriteString(Screen::oled, 0, 4, 1, strbuffer, FONT_6x8, 0, 0);
 
-    sprintf(bff, "%-5s    HP:%3d/%-3d", enemy->Name, enemy->Hp, enemy->MaxHp);
-    oledWriteString(Screen::oled, 0, 4, 2, bff, FONT_6x8, 0, 0);
+    sprintf(strbuffer, "%-5s    HP:%3d/%-3d", enemy->Name, enemy->Hp, enemy->MaxHp);
+    oledWriteString(Screen::oled, 0, 4, 2, strbuffer, FONT_6x8, 0, 0);
 
     oledDumpBuffer(Screen::oled, NULL);
   }
