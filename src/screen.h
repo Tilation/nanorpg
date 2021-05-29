@@ -2,7 +2,7 @@
 #include <ss_oled.h>
 #include <entity.h>
 #include <enums.h>
-#include <xdata.h>
+#include <xenemies.h>
 #include <player.h>
 
 class Screen

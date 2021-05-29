@@ -4,8 +4,9 @@
 #include <entity.h>
 #include <enums.h>
 #include <button.h>
-#include <xdata.h>
+#include <xenemies.h>
 #include <player.h>
+#include <xstrings.h>
 
 #define SDA_PIN 18
 #define SCL_PIN 19
