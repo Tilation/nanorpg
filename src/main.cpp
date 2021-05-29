@@ -79,7 +79,7 @@ void setup()
 
   for (int i = 0; i < buttonCount; i++)
   {
-    pinMode(buttons[i].PIN(), INPUT);
+      pinMode(buttons[i].PIN(), INPUT);
   }
 
   rc = oledInit(&oled, OLED_128x32, 0x3c, 0, 0, 0, SDA_PIN, SCL_PIN, RESET_PIN, 1000000L);
