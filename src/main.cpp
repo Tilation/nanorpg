@@ -27,9 +27,11 @@ void DisableInputFor(word);
 
 Player player("Caspr");
 static uint8_t ucBackBuffer[512];
-char strbuffer[6];
+
 int rc;
 SSOLED oled;
+
+byte asd;
 
 Screen * ActiveScreen;
 EnemyInfoScreen enemyinfoscreen;
@@ -75,6 +77,8 @@ SIGNAL(TIMER0_COMPA_vect)
 void setup()
 {
   Serial.begin(9600);
+  while (!Serial);
+
   OCR0A = 0xAF;
   TIMSK0 |= _BV(OCIE0A);
 
@@ -87,6 +91,12 @@ void setup()
   if (rc != OLED_NOT_FOUND)
   {
     Screen::Setup(StepStateMachine,&oled,&player);
+
+    GetString(STRING::battlescreen_hp);
+    Serial.print("battlescreen_hp:");
+    Serial.print(strbuffer);
+    Serial.println();
+
 
     oledSetBackBuffer(&oled, ucBackBuffer);
     oledFill(&oled, 0, 1);

@@ -3,6 +3,7 @@
 #include <entity.h>
 #include <enums.h>
 #include <xenemies.h>
+#include <xstrings.h>
 #include <player.h>
 
 class Screen
@@ -11,12 +12,6 @@ protected:
   static void (*StateMachineStep)(int);
   static SSOLED *oled;
   static Player *player;
-  static char strbuffer[32];
-
-  void ClearBuffer()
-  {
-    memset(strbuffer, 0, sizeof (strbuffer));
-  }
 
 public:
   Screen() {}
@@ -37,7 +32,6 @@ public:
 void (*Screen::StateMachineStep)(int);
 SSOLED *Screen::oled;
 Player *Screen::player;
-char Screen::strbuffer[32];
 
 class BattleScreen : public Screen
 {
@@ -102,6 +96,7 @@ public:
     oledFill(Screen::oled, 0, 0);
     //Draw Player Name
     oledWriteString(Screen::oled, 0, 0, 0, Screen::player->Name, FONT_6x8, 0, 0);
+
 
     //Draw Player HP
     sprintf(strbuffer, "HP%3d", Screen::player->Hp);
@@ -239,8 +234,6 @@ public:
     oledSetPixel(Screen::oled, 127, 0, 0, 0);
     oledSetPixel(Screen::oled, 127, 31, 0, 0);
     oledSetPixel(Screen::oled, 127, 31, 0, 0);
-
-    Screen::ClearBuffer();
 
     sprintf(strbuffer, "INFO: DM/DF:%3d/%-3d", enemy->Dmg, enemy->Def);
     oledWriteString(Screen::oled, 0, 4, 1, strbuffer, FONT_6x8, 0, 0);

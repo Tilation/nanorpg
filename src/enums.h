@@ -8,3 +8,10 @@ enum STATE{
   SHOWENEMYINFO,
   RESUMEBATTLE
 };
+
+enum STRING
+{
+  battlescreen_hp = 0,
+  battlescreen_dm,
+  battlescreen_df,
+};
