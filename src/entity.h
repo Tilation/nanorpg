@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <avr/pgmspace.h>
+#include <xstrings.h>
+#define DMG_VARIATION 4.0
 
 class Entity
 {
@@ -9,6 +11,7 @@ public:
 
   byte Dmg;
   byte Def;
+  byte Int;
   char Name[6];
   byte Lvl;
   word MaxHp;
@@ -17,6 +20,7 @@ public:
 
   Entity()
   {
+    //xGetString(STRING::empty_text);
     strcpy(Name, "EMPTY");
     MaxHp = 1;
     Hp = 1;
@@ -27,17 +31,28 @@ public:
 
   bool Damage(word incomingDamage)
   {
-    Hp -= min(incomingDamage, Hp);
+    word calcDmg = incomingDamage;
+    if (Def >= incomingDamage) 
+    {
+      calcDmg = 1;
+    }else
+    {
+      calcDmg = calcDmg - word(Def);
+    }
+    if (calcDmg <= 0)
+    {
+      calcDmg = 1;
+    }
+    if (calcDmg > Hp)
+    {
+      calcDmg = Hp;
+    }
+    Hp -= calcDmg;
     return Hp == 0;
   }
 
   word GenerateDamage()
   {
-    return random(min(0, Dmg - Lvl), Dmg + Lvl);
-  }
-
-  word GenerateDefense()
-  {
-    return random(min(0, Def - Lvl), Def + Lvl);
+    return random(max(0, Dmg - (Dmg / DMG_VARIATION)), Dmg + (Dmg / DMG_VARIATION));
   }
 };
