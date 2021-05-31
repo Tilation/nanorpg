@@ -50,27 +50,12 @@ public:
     menu.SetupStrings(menuOpts, 4);
   }
 
-  void Attack()
+  bool Attack()
   {
     word dmg = Screen::player->GenerateDamage();
     bool dead = Enemy.Damage(dmg);
-    if (dead == true)
-    {
-      Screen::StateMachineStep(STATE::ENEMYKILLED);
-      return;
-    }
     Show();
-  }
-
-  void ButtonOkPressed() override
-  {
-    switch (menu.selected)
-    {
-    case 0: Attack(); EnemyTurn(); break;
-    case 1: break;
-    case 2: Screen::StateMachineStep(STATE::SHOWENEMYINFO); break;
-    case 3: TryEscape(); EnemyTurn(); break;
-    }
+    return dead;
   }
 
   void EnemyTurn()
@@ -85,14 +70,37 @@ public:
     Show();
   }
 
-  void TryEscape()
+  bool TryEscape()
   {
-      if (random(0,3) == 0)
-      {
-          Screen::StateMachineStep(STATE::HOME_SCREEN);
-      }
+    return random(0, 2) == 0;
   }
 
+  void ButtonOkPressed() override
+  {
+    switch (menu.selected)
+    {
+    case 0:
+      if (!Attack())
+        EnemyTurn();
+      else
+        Screen::StateMachineStep(STATE::ENEMYKILLED);
+      break;
+
+    case 1:
+      break;
+
+    case 2:
+      Screen::StateMachineStep(STATE::SHOWENEMYINFO);
+      break;
+
+    case 3:
+      if (!TryEscape())
+        EnemyTurn();
+      else
+        Screen::StateMachineStep(STATE::HOME_SCREEN);
+      break;
+    }
+  }
   void ButtonSwitchPressed() override
   {
     menu.ButtonSwitch();
@@ -236,10 +244,32 @@ public:
   {
     oledFill(Screen::oled, 0, 0);
     oledRectangle(Screen::oled, 0, 0, 127, 31, 1, 0);
-    oledSetPixel(Screen::oled, 0, 0, 0, 0);
-    oledSetPixel(Screen::oled, 127, 0, 0, 0);
-    oledSetPixel(Screen::oled, 127, 31, 0, 0);
-    oledSetPixel(Screen::oled, 127, 31, 0, 0);
+
+    oledRectangle(Screen::oled, 0,    0,  1,    1,   0,  1);        //tl  
+    oledRectangle(Screen::oled, 126,  0,  127,  0,   0,  1);    //tr
+    oledRectangle(Screen::oled, 0,    30, 1,    31,  0,  1);        //bl
+    oledRectangle(Screen::oled, 126,  30, 127,  31,  0,  1);    //br
+
+    oledRectangle(Screen::oled, 1,    1,  2,    2,   1,  1);        //tl  
+    oledRectangle(Screen::oled, 125,  1,  125,  2,   1,  1);    //tr
+    oledRectangle(Screen::oled, 1,    29, 2,    30,  1,  1);        //bl
+    oledRectangle(Screen::oled, 125,  29, 126,  30,  1,  1);    //br
+
+
+    oledSetPixel(Screen::oled, 2,   2,  0, 0);
+    oledSetPixel(Screen::oled, 125, 2,  0, 0);
+    oledSetPixel(Screen::oled, 2,   29, 0, 0);
+    oledSetPixel(Screen::oled, 125, 29, 0, 0);
+
+    /*
+__XXXXXX__
+_X______X_
+X________X
+X________X
+X________X
+_X______X_
+__XXXXXX__
+*/
 
     xGetString(STRING::info_1);
     sprintf(strbuffer, internalbuffer, enemy->Dmg, enemy->Def);
@@ -264,12 +294,11 @@ class HomeScreen : public Screen
 public:
   Menu menu;
   STRING menuOpts[5] = {
-    STRING::home_adventure,
-    STRING::home_items,
-    STRING::home_craft,
-    STRING::home_trade,
-    STRING::home_stats
-    };
+      STRING::home_adventure,
+      STRING::home_items,
+      STRING::home_craft,
+      STRING::home_trade,
+      STRING::home_stats};
 
   HomeScreen()
   {
@@ -296,7 +325,7 @@ public:
     }
 
     xGetString(STRING::home_welcome);
-    oledWriteString(Screen::oled, 0, (strlen(player->Name)+ 2 + (!has_s)) * 6, 0, internalbuffer, FONT_6x8, 0, 0);
+    oledWriteString(Screen::oled, 0, (strlen(player->Name) + 2 + (!has_s)) * 6, 0, internalbuffer, FONT_6x8, 0, 0);
 
     oledDrawLine(Screen::oled, 0, 8, 0, 31, 0);
 
@@ -311,10 +340,15 @@ public:
   {
     switch (menu.selected)
     {
-      case 0: Screen::StateMachineStep(STATE::GENERATE_NEW_ENEMY); break;
-      case 1: break;
-      case 2: break;
-      case 3: break;
+    case 0:
+      Screen::StateMachineStep(STATE::GENERATE_NEW_ENEMY);
+      break;
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
     }
   }
 
