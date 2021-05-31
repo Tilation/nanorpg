@@ -46,7 +46,7 @@ SIGNAL(TIMER0_COMPA_vect)
     buttons[i].buttonCallBack();
   }
 }
-
+auto ptr = &internalbuffer;
 
 void setup()
 {
@@ -56,8 +56,6 @@ void setup()
 
   OCR0A = 0xAF;
   TIMSK0 |= _BV(OCIE0A);
-  
-
 
   for (int i = 0; i < buttonCount; i++)
   {
