@@ -15,6 +15,12 @@ enum CLASS_LEVELUP
   DMG
 };
 
+enum LOCATION
+{
+  PORT = 0b0000001,
+  CAPITAL = 0b0000010,
+};
+
 enum STATE
 {
   ENEMYKILLED = 0,
@@ -25,6 +31,8 @@ enum STATE
   SHOWENEMYINFO,
   RESUMEBATTLE,
   HOME_SCREEN,
+  SHOW_SAVE_LOAD_SCREEN,
+  STORY_SHOW_GAMELOGO
 };
 
 enum STRING
@@ -55,5 +63,18 @@ enum STRING
   home_welcome,
   home_welcome_nos,
   home_welcome_s,
-  home_trade
+  home_trade,
+  home_data,
+
+  data_save,
+  data_load,
+
+  blank_space,
+
+  history_0,
+  history_1,
+  history_2,
+  history_3,
+
+  get_location_format
 };

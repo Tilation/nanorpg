@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <entity.h>
-#include <xstrings.h>
+
 const byte enemies_bytes[][Entity::BYTES] PROGMEM =
 {
     {
@@ -23,26 +23,3 @@ const byte enemies_bytes[][Entity::BYTES] PROGMEM =
 };
 
 const word enemyCount = sizeof(enemies_bytes) / Entity::BYTES;
-
-void GetEnemy(Entity * entity, byte idx)
-{
-    xGetString(STRING::get_enemy_format);
-
-    sprintf(entity->Name, internalbuffer,
-      char(pgm_read_byte(&enemies_bytes[idx][0])),
-      char(pgm_read_byte(&enemies_bytes[idx][1])),
-      char(pgm_read_byte(&enemies_bytes[idx][2])),
-      char(pgm_read_byte(&enemies_bytes[idx][3])),
-      char(pgm_read_byte(&enemies_bytes[idx][4]))
-    );
-    
-    entity->MaxHp = word(pgm_read_byte(&enemies_bytes[idx][5]), pgm_read_byte(&enemies_bytes[idx][6]));
-    entity->Hp = entity->MaxHp;
-
-    entity->Lvl = pgm_read_byte(&enemies_bytes[idx][7]);
-
-    entity->Dmg = pgm_read_byte(&enemies_bytes[idx][8]);
-    entity->Def = pgm_read_byte(&enemies_bytes[idx][9]);
-
-    entity->spr_idx = pgm_read_byte(&enemies_bytes[idx][10]);
-}

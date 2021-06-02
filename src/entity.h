@@ -1,7 +1,6 @@
 #pragma once
 #include <Arduino.h>
 #include <avr/pgmspace.h>
-#include <xstrings.h>
 #define DMG_VARIATION 4.0
 
 class Entity

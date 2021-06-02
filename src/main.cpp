@@ -1,117 +1,170 @@
 #include <Arduino.h>
-#include <ss_oled.h>
-#include <screen.h>
-#include <entity.h>
-#include <enums.h>
-#include <button.h>
-#include <xenemies.h>
-#include <player.h>
-#include <xstrings.h>
-#include <MemoryFree.h>
 
-#define SDA_PIN 18
-#define SCL_PIN 19
-#define RESET_PIN -1
+// #include <screen.h>
+// #include <entity.h>
+// #include <enums.h>
+// #include <button.h>
+// #include <data.h>
+// #include <player.h>
 
-void StepStateMachine(int state);
-void buttonBackEvent();
-void buttonSwitchEvent();
-void buttonOkEvent();
 
-Player player("Caspr",CLASS::WARRIOR);
-static uint8_t ucBackBuffer[512];
+// #define true 1
+// #define false 0
+// #define SDA_PIN 18
+// #define SCL_PIN 19
+// #define RESET_PIN -1
+// #define buffersize 32
 
-int rc;
-SSOLED oled;
+// bool timer;
+// long internaltimer;
 
-Screen * ActiveScreen = 0;
-HomeScreen homescreen;
-EnemyInfoScreen enemyinfoscreen;
-BattleScreen battlescreen;
-EnemyGeneratorScreen enemygenscreen(&battlescreen);
-EnemyDeadScreen enemydeadscreen(&battlescreen);
+// void Wait(long milis)
+// {
+//   timer = true;
+//   internaltimer = milis;
+//   do
+//   { 
+//     timer = internaltimer > 0;
+//   }while(timer == true);
+// }
 
-Button buttons[] = {
-  {5, buttonBackEvent},
-  {6, buttonSwitchEvent},
-  {7, buttonOkEvent}
-};
-int buttonCount = sizeof(buttons) / sizeof(buttons[0]);
+// void StepStateMachine(int state);
+// void buttonBackEvent();
+// void buttonSwitchEvent();
+// void buttonOkEvent();
 
-// Timer 0 Interrupt is called once a millisecond
-SIGNAL(TIMER0_COMPA_vect)
-{  
-  for (int i = 0; i < buttonCount; i++)
-  {
-    buttons[i].buttonCallBack();
-  }
-}
-auto ptr = &internalbuffer;
+// char internalbuffer[buffersize];
+// char strbuffer[buffersize];
 
-void setup()
-{
+// char * Data::strbuffer = strbuffer;
+// char * Data::internalbuffer = internalbuffer;
+
+// Player player("unsa", CLASS::WARRIOR);
+// static uint8_t ucBackBuffer[512];
+
+// int rc;
+// //SSOLED oled;
+
+// HomeScreen homescreen;
+// EnemyInfoScreen enemyinfoscreen;
+// BattleScreen battlescreen;
+// EnemyGeneratorScreen enemygenscreen(&battlescreen);
+// EnemyDeadScreen enemydeadscreen(&battlescreen);
+// DataScreen datascreen;
+// StoryScreen storyscreen;
+
+// Button buttons[] = {
+//     {5, buttonBackEvent},
+//     {6, buttonSwitchEvent},
+//     {7, buttonOkEvent}};
+// int buttonCount = sizeof(buttons) / sizeof(buttons[0]);
+
+// // Timer 0 Interrupt is called once a millisecond
+// SIGNAL(TIMER0_COMPA_vect)
+// {
+//   internaltimer -= (internaltimer > 0) * timer;
+//   for (int i = 0; i < buttonCount; i++)
+//   {
+//     buttons[i].buttonCallBack();
+//   }
+// }
+
+// void InitializeButtons()
+// {
+//   for (int i = 0; i < buttonCount; i++)
+//   {
+//     pinMode(buttons[i].PIN(), INPUT);
+//   }
+// }
+
+// void setup()
+// {
+//   Data::Setup(strbuffer, internalbuffer);
+//   Data::PlayerLoadBaseStats(&player);
   
-  Serial.begin(9600);
-  while (!Serial);
+//   Serial.begin(9600);
 
-  OCR0A = 0xAF;
-  TIMSK0 |= _BV(OCIE0A);
+//   OCR0A = 0xAF;
+//   TIMSK0 |= _BV(OCIE0A);
 
-  for (int i = 0; i < buttonCount; i++)
-  {
-    pinMode(buttons[i].PIN(), INPUT);
-  }
+//   InitializeButtons();
 
-  rc = oledInit(&oled, OLED_128x32, 0x3c, 0, 0, 0, SDA_PIN, SCL_PIN, RESET_PIN, 1000000L);
-  if (rc != OLED_NOT_FOUND)
-  {
-    Screen::Setup(StepStateMachine,&oled,&player);
+//   //rc = oledInit(&oled, OLED_128x32, 0x3c, 0, 0, 0, SDA_PIN, SCL_PIN, RESET_PIN, 1000000L);
+//   //if (rc != OLED_NOT_FOUND)
+//   //{
+//     //Screen::Setup(StepStateMachine, &oled, &player);
+//     // char buffer shenanigans
+//     // minimum 2 prints for the program to load (wtf?)
+//     //Serial.println(internalbuffer);
+//     //Wait(1000);
+//     Serial.println(internalbuffer);
+//     Serial.println(internalbuffer);
 
-    // internal char buffer shenanigans
-    // minimum 2 prints for the program to load (wtf?)
-    Serial.println(internalbuffer);
-    Serial.println(internalbuffer);   
-    //Serial.println(internalbuffer);
-    //Serial.println(internalbuffer);
-    
-    oledSetBackBuffer(&oled, ucBackBuffer);
-    oledFill(&oled, 0, 1);
-    oledSetContrast(&oled, 127);
+//     //oledSetBackBuffer(&oled, ucBackBuffer);
+//     //oledSetContrast(&oled, 127);
+//     //oledFill(&oled, 1, 1);
 
-    StepStateMachine(STATE::HOME_SCREEN);
-  }
-}
+//     //Wait(2000);
+//     //oledFill(&oled, 0, 1);
 
-
+//     StepStateMachine(STATE::STORY_SHOW_GAMELOGO);
+//   //}
+// }
+void setup(){}
 void loop() {}
 
-void StepStateMachine(int state)
-{
-  switch (state)
-  {
-    case STATE::RESUMEBATTLE: ActiveScreen = &battlescreen; break;
-    case STATE::SHOWENEMYINFO: enemyinfoscreen.enemy = &battlescreen.Enemy; ActiveScreen = &enemyinfoscreen; break;
-    case STATE::GENERATE_NEW_ENEMY: ActiveScreen = &enemygenscreen; break;
-    case STATE::ENEMYGENERATED: ActiveScreen = &battlescreen; break;
-    case STATE::KILL_SCREEN_END: ActiveScreen = &enemygenscreen; break;
-    case STATE::ENEMYKILLED: ActiveScreen = &enemydeadscreen; break;
-    case STATE::HOME_SCREEN: ActiveScreen = &homescreen; break;
-  }
-  
-  if (ActiveScreen != 0) (*ActiveScreen).Show();
-}
+// void StepStateMachine(int state)
+// {
+//   switch (state)
+//   {
+//   case STATE::RESUMEBATTLE:
+//     Screen::SetActiveScreen(&battlescreen);
+//     break;
+//   case STATE::SHOWENEMYINFO:
+//     enemyinfoscreen.enemy = &battlescreen.Enemy;
+//     Screen::SetActiveScreen(&enemyinfoscreen);
+//     break;
+//   case STATE::GENERATE_NEW_ENEMY:
+//     Screen::SetActiveScreen(&enemygenscreen);
+//     break;
+//   case STATE::ENEMYGENERATED:
+//     Screen::SetActiveScreen(&battlescreen);
+//     break;
+//   case STATE::KILL_SCREEN_END:
+//     Screen::SetActiveScreen(&enemygenscreen);
+//     break;
+//   case STATE::ENEMYKILLED:
+//     Screen::SetActiveScreen(&enemydeadscreen);
+//     break;
+//   case STATE::HOME_SCREEN:
+//     Screen::SetActiveScreen(&homescreen);
+//     break;
+//   case STATE::SHOW_SAVE_LOAD_SCREEN:
+//     Screen::SetActiveScreen(&datascreen);
+//     break;
+//   case STATE::STORY_SHOW_GAMELOGO:
+//     Screen::SetActiveScreen(&homescreen, &storyscreen);
+//     storyscreen.text_rows[0] = STRING::history_0;
+//     storyscreen.text_rows[1] = STRING::history_1;
+//     storyscreen.text_rows[2] = STRING::history_2;
+//     storyscreen.text_rows[3] = STRING::history_3;
+//     break;
+//   }
 
-void buttonBackEvent()
-{
-  if (ActiveScreen != 0) (*ActiveScreen).ButtonBackPressed();
-}
+//   Screen::ShowActiveScreen();
+// }
 
-void buttonSwitchEvent()
-{
-  if (ActiveScreen != 0) (*ActiveScreen).ButtonSwitchPressed();
-}
+// void buttonBackEvent()
+// {
+//   Screen::ActiveScreenButtonBack();
+// }
 
-void buttonOkEvent()
-{
-  if (ActiveScreen != 0) (*ActiveScreen).ButtonOkPressed();
-}
+// void buttonSwitchEvent()
+// {
+//   Screen::ActiveScreenButtonSwitch();
+// }
+
+// void buttonOkEvent()
+// {
+//   Screen::ActiveScreenButtonOk();
+// }

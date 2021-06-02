@@ -1,6 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include <xstrings.h>
+#include <data.h>
 #include <ss_oled.h>
 #include <screen.h>
 #include <MemoryFree.h>
@@ -19,6 +19,7 @@ public:
     byte selected = 0;
     byte menuSize = 0;
     bool draw_bar;
+    
 
     void SetupStrings(STRING opt[], byte count)
     {
@@ -35,15 +36,20 @@ public:
 
             if (itemidx < menuSize)
             {
-                xGetString(menuItems[itemidx]);
-                oledWriteString(oled, 0, startx, startcol + i, internalbuffer, FONT_6x8, selected == itemidx, 0);
+                oledWriteString(
+                    oled,
+                    0,
+                    startx, startcol + i,
+                    Data::xGetString(menuItems[itemidx]),
+                    FONT_6x8,
+                    selected == itemidx, 0);
             }
             if (selected == itemidx && draw_bar)
             {
                 oledDrawLine(oled,
-                             (strlen(internalbuffer)) * 6 + 1,
+                             startx + (strlen(Data::internalbuffer)) * 6 + 1,
                              (startcol * 8) + (i * 8),
-                             (strlen(internalbuffer)) * 6 + 1,
+                             startx + (strlen(Data::internalbuffer)) * 6 + 1,
                              (startcol * 8) + (i * 8) + 7, 0
                              );
             }
