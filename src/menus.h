@@ -1,9 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <data.h>
-#include <ss_oled.h>
+#include <OneBitDisplay.h>
 #include <screen.h>
-#include <MemoryFree.h>
 
 #define true 1
 #define false 0
@@ -27,7 +26,7 @@ public:
         menuSize = count;
     }
 
-    void Draw(SSOLED *oled, byte startx, byte startcol, byte colshigh)
+    void Draw(OBDISP *oled, byte startx, byte startcol, byte colshigh)
     {
         byte startidx = selected / colshigh;
         for (byte i = 0; i < colshigh; i++)
@@ -36,7 +35,7 @@ public:
 
             if (itemidx < menuSize)
             {
-                oledWriteString(
+                obdWriteString(
                     oled,
                     0,
                     startx, startcol + i,
@@ -46,12 +45,13 @@ public:
             }
             if (selected == itemidx && draw_bar)
             {
-                oledDrawLine(oled,
+                obdDrawLine(oled,
                              startx + (strlen(Data::internalbuffer)) * 6 + 1,
                              (startcol * 8) + (i * 8),
                              startx + (strlen(Data::internalbuffer)) * 6 + 1,
-                             (startcol * 8) + (i * 8) + 7, 0
-                             );
+                             (startcol * 8) + (i * 8) + 7,
+                            1,0
+                            );
             }
         }
     }
